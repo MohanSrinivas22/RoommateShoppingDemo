@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReviewShoppingListActivity extends AppCompatActivity
-            implements AddShoppingItemDialogFragment.AddShoppingItemDialogListener {
+            implements AddShoppingItemDialogFragment.AddShoppingItemDialogListener,
+                       EditShoppingItemDialogFragment.EditShoppingItemDialogListener {
 
     public static final String DEBUG_TAG = "ReviewShoppingListActivity";
 
@@ -120,5 +121,68 @@ public class ReviewShoppingListActivity extends AppCompatActivity
                     }
                 });
     }
+
+    public void updateShoppingItem(int position, Shopping shoppingItem, int action){
+        if( action == EditShoppingItemDialogFragment.SAVE ) {
+            Log.d(DEBUG_TAG, "Updating shopping item at: " + position + "(" + shoppingItem.getItemName() + ")");
+            recyclerAdapter.notifyItemChanged(position);
+            DatabaseReference ref = database
+                    .getReference()
+                    .child("shoppingItems")
+                    .child(shoppingItem.getKey());
+
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    dataSnapshot.getRef().setValue(shoppingItem).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(DEBUG_TAG, "updated job lead at: " + position + "(" + shoppingItem.getItemName() + ")");
+                            Toast.makeText(getApplicationContext(), "Job lead updated for " + shoppingItem.getItemName(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d(DEBUG_TAG, "failed to update job lead at: " + position + "(" + shoppingItem.getItemName() + ")");
+                    Toast.makeText(getApplicationContext(), "Failed to update " + shoppingItem.getItemName(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else if( action == EditShoppingItemDialogFragment.DELETE ) {
+            Log.d( DEBUG_TAG, "Deleting shopping item at: " + position + "(" + shoppingItem.getItemName() + ")" );
+            shoppingList.remove( position );
+            recyclerAdapter.notifyItemRemoved( position );
+            DatabaseReference ref = database
+                    .getReference()
+                    .child( "shoppingItems" )
+                    .child( shoppingItem.getKey() );
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    snapshot.getRef().removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Log.d( DEBUG_TAG, "deleted shopping item at: " + position + "(" + shoppingItem.getItemName() + ")" );
+                            Toast.makeText(getApplicationContext(), "Shopping item deleted for " + shoppingItem.getItemName(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.d( DEBUG_TAG, "failed to delete shopping item at: " + position + "(" + shoppingItem.getItemName() + ")" );
+                    Toast.makeText(getApplicationContext(), "Failed to delete " + shoppingItem.getItemName(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+    }
+
 
 }
