@@ -68,9 +68,9 @@ public class ShoppingRecyclerAdapter extends RecyclerView.Adapter<ShoppingRecycl
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                EditShoppingItemDialogFragment editShoppingFragment =
-//                        EditShoppingItemDialogFragment.newInstance( holder.getAdapterPosition(), key, itemName, category, quantity, price );
-//                editShoppingFragment.show( ((AppCompatActivity)context).getSupportFragmentManager(), null);
+                EditShoppingItemDialogFragment editShoppingFragment =
+                        EditShoppingItemDialogFragment.newInstance( holder.getAdapterPosition(), key, itemName, category, quantity, price );
+                editShoppingFragment.show( ((AppCompatActivity)context).getSupportFragmentManager(), null);
             }
         });
     }
