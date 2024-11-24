@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">RoommateShoppingDemo</string>
+    <string name="signIn">Sign In</string>
+    <string name="userRegistration">User Registration</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
