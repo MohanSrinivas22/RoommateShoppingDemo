@@ -63,7 +63,7 @@ public class ReviewShoppingListActivity extends AppCompatActivity
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        // the recycler adapter with job leads is empty at first; it will be updated later
+        // the recycler adapter with shopping items is empty at first; it will be updated later
         recyclerAdapter = new ShoppingRecyclerAdapter( shoppingList, ReviewShoppingListActivity.this );
         recyclerView.setAdapter( recyclerAdapter );
 
@@ -137,8 +137,8 @@ public class ReviewShoppingListActivity extends AppCompatActivity
                     dataSnapshot.getRef().setValue(shoppingItem).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.d(DEBUG_TAG, "updated job lead at: " + position + "(" + shoppingItem.getItemName() + ")");
-                            Toast.makeText(getApplicationContext(), "Job lead updated for " + shoppingItem.getItemName(),
+                            Log.d(DEBUG_TAG, "updated shopping item at: " + position + "(" + shoppingItem.getItemName() + ")");
+                            Toast.makeText(getApplicationContext(), "shopping item updated for " + shoppingItem.getItemName(),
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -146,7 +146,7 @@ public class ReviewShoppingListActivity extends AppCompatActivity
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.d(DEBUG_TAG, "failed to update job lead at: " + position + "(" + shoppingItem.getItemName() + ")");
+                    Log.d(DEBUG_TAG, "failed to update shopping item at: " + position + "(" + shoppingItem.getItemName() + ")");
                     Toast.makeText(getApplicationContext(), "Failed to update " + shoppingItem.getItemName(),
                             Toast.LENGTH_SHORT).show();
                 }
