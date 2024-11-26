@@ -35,13 +35,15 @@ public class ReviewShoppingListActivity extends AppCompatActivity
     public static final String DEBUG_TAG = "ReviewShoppingListActivity";
 
     protected RecyclerView recyclerView;
+    protected RecyclerView basketRecyclerView;
     protected List<Shopping> shoppingList;
+    protected List<Shopping> basketList;
     protected ShoppingRecyclerAdapter recyclerAdapter;
     private FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d( DEBUG_TAG, "onCreate()" );
+        Log.d( DEBUG_TAG, "ReviewShoppingList.onCreate()" );
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
@@ -182,7 +184,35 @@ public class ReviewShoppingListActivity extends AppCompatActivity
             });
         }
 
-    }
+        else if(action == EditShoppingItemDialogFragment.ADD) {
+            Log.d( DEBUG_TAG, "Adding Shopping Item at: " + position + "(" + shoppingItem.getItemName() + ") to purchase list." );
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("shoppingBasket");
+            myRef.push().setValue(shoppingItem)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            basketRecyclerView.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    basketRecyclerView.smoothScrollToPosition(basketList.size()-1);
+                                }
+                            });
+                            Log.d( DEBUG_TAG, "Shopping Item added to basket: " + shoppingItem );
+                            Toast.makeText(getApplicationContext(), "Added to basket for " + shoppingItem.getItemName(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(), "Failed to create a shopping item for " + shoppingItem.getItemName(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
+        }
+
+    }
 
 }

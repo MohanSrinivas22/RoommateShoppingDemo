@@ -32,6 +32,7 @@ public class EditShoppingItemDialogFragment extends DialogFragment {
 
     public interface EditShoppingItemDialogListener{
         void updateShoppingItem(int position, Shopping shoppingItem, int action);
+//        void addPurchaseItem(int position, Shopping purchaseItem, int action);
     }
 
     public static EditShoppingItemDialogFragment newInstance(int position, String key, String itemName, String category, int quantity, double price) {
@@ -89,9 +90,10 @@ public class EditShoppingItemDialogFragment extends DialogFragment {
 
         builder.setNeutralButton("DELETE", new DeleteButtonClickListener());
 
+        builder.setNeutralButton("Add", new AddButtonClickListener());
+
         return builder.create();
     }
-
 
     private class SaveButtonClickListener implements DialogInterface.OnClickListener {
         @Override
@@ -112,7 +114,6 @@ public class EditShoppingItemDialogFragment extends DialogFragment {
         }
     }
 
-
     private class DeleteButtonClickListener implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialogInterface, int i){
@@ -121,6 +122,25 @@ public class EditShoppingItemDialogFragment extends DialogFragment {
 
             EditShoppingItemDialogListener listener = (EditShoppingItemDialogListener) getActivity();
             listener.updateShoppingItem(position, shoppingItem, DELETE);
+            dismiss();
+        }
+    }
+
+    private class AddButtonClickListener implements DialogInterface.OnClickListener {
+
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i){
+            String itemName = itemNameView.getText().toString();
+            String category = categoryView.getText().toString();
+            int quantity = Integer.parseInt(quantityView.getText().toString());
+            double price = Double.parseDouble(priceView.getText().toString());
+
+            Shopping purchaseItem = new Shopping(itemName, category, quantity, price);
+            purchaseItem.setKey(key);
+
+            EditShoppingItemDialogListener listener = (EditShoppingItemDialogListener) getActivity();
+            listener.updateShoppingItem(position, purchaseItem, ADD);
+            listener.updateShoppingItem(position, purchaseItem, DELETE);
             dismiss();
         }
     }
