@@ -186,8 +186,8 @@ public class ReviewShoppingListActivity extends AppCompatActivity
 
         else if(action == EditShoppingItemDialogFragment.TO_BASKET) {
             Log.d( DEBUG_TAG, "Adding Shopping Item at: " + position + "(" + shoppingItem.getItemName() + ") to purchase list." );
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference newRef = database.getReference("shoppingBasket");
+            FirebaseDatabase db = FirebaseDatabase.getInstance();
+            DatabaseReference newRef = db.getReference("shoppingBasket");
             newRef.push().setValue(shoppingItem)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override

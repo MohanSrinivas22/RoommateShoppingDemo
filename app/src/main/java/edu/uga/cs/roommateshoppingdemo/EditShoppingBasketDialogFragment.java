@@ -115,12 +115,13 @@ public class EditShoppingBasketDialogFragment extends DialogFragment {
     private class DeleteButtonClickListener implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialogInterface, int i){
-            Shopping basketItem = new Shopping(itemName, category, quantity, price);
+            Shopping shoppingItem = new Shopping(itemName, category, quantity, price);
 
-            // Add the item back to the shopping list.
+//             Add the item back to the shopping list.
             AddShoppingItemDialogFragment.AddShoppingItemDialogListener list = (AddShoppingItemDialogFragment.AddShoppingItemDialogListener) getActivity();
-            list.addShoppingItem(basketItem);
+            list.addShoppingItem(shoppingItem);
 
+            Shopping basketItem = new Shopping(itemName, category, quantity, price);
             basketItem.setKey(key);
 
             // Now delete the existing basket item.

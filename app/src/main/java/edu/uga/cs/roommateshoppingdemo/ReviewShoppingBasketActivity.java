@@ -1,5 +1,6 @@
 package edu.uga.cs.roommateshoppingdemo;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,15 +23,20 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReviewShoppingBasketActivity extends AppCompatActivity {
+public class ReviewShoppingBasketActivity extends AppCompatActivity
+    implements EditShoppingBasketDialogFragment.EditShoppingBasketDialogListener,
+        AddShoppingItemDialogFragment.AddShoppingItemDialogListener{
 
     public static final String DEBUG_TAG = "ReviewShoppingBasketActivity";
 
     protected RecyclerView basketRecyclerView;
     protected List<Shopping> shoppingBasket;
+    protected List<Shopping> shoppingList;
+    protected RecyclerView recyclerView;
     protected BasketRecyclerAdapter basketRecyclerAdapter;
     private FirebaseDatabase database;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -42,6 +49,10 @@ public class ReviewShoppingBasketActivity extends AppCompatActivity {
         Button checkoutButton = findViewById(R.id.checkout);
 
         shoppingBasket = new ArrayList<Shopping>();
+
+        recyclerView = findViewById(R.id.recyclerView);
+        RecyclerView.LayoutManager lm = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(lm);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         basketRecyclerView.setLayoutManager(layoutManager);
@@ -74,6 +85,33 @@ public class ReviewShoppingBasketActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void addShoppingItem(Shopping shoppingItem){
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = db.getReference("shoppingItems");
+        myRef.push().setValue(shoppingItem)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        recyclerView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclerView.smoothScrollToPosition(shoppingList.size()-1);
+                            }
+                        });
+                        Log.d( DEBUG_TAG, "Shopping Item saved: " + shoppingItem );
+                        Toast.makeText(getApplicationContext(), "Shopping Item created for " + shoppingItem.getItemName(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Failed to create a shopping item for " + shoppingItem.getItemName(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     public void updateShoppingBasket(int position, Shopping basketItem, int action){
@@ -112,7 +150,7 @@ public class ReviewShoppingBasketActivity extends AppCompatActivity {
             basketRecyclerAdapter.notifyItemRemoved( position );
             DatabaseReference ref = database
                     .getReference()
-                    .child( "shoppingItems" )
+                    .child( "shoppingBasket" )
                     .child( basketItem.getKey() );
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
