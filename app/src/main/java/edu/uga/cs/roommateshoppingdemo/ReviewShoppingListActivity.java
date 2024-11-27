@@ -34,7 +34,7 @@ public class ReviewShoppingListActivity extends AppCompatActivity
 
     public static final String DEBUG_TAG = "ReviewShoppingListActivity";
 
-    protected RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     protected RecyclerView basketRecyclerView;
     protected List<Shopping> shoppingList;
     protected List<Shopping> basketList;

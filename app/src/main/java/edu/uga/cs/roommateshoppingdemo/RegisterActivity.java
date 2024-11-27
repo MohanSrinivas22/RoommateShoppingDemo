@@ -3,6 +3,7 @@ package edu.uga.cs.roommateshoppingdemo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.SignInMethodQueryResult;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -49,6 +51,19 @@ public class RegisterActivity extends AppCompatActivity {
         public void onClick(View view) {
             final String name = nameEditText.getText().toString();
             final String email = emailEditText.getText().toString();
+
+            if (email.isEmpty()) {
+                emailEditText.setError("Email is required");
+                emailEditText.requestFocus();
+                return;
+            }
+
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                emailEditText.setError("Enter a valid email");
+                emailEditText.requestFocus();
+                return;
+            }
+
             final String password = passworEditText.getText().toString();
 
             final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -59,6 +74,23 @@ public class RegisterActivity extends AppCompatActivity {
             // new user creation succeeded or failed.
             // If a new user has been created, Firebase already signs in the new user;
             // no separate sign in is needed.
+
+            firebaseAuth.fetchSignInMethodsForEmail(email)
+                    .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                            if (task.isSuccessful()) {
+                                SignInMethodQueryResult result = task.getResult();
+                                if (result != null && result.getSignInMethods() != null) {
+                                    // User exists
+                                    Toast.makeText(RegisterActivity.this, "User already exists. You can sign in.", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                // Error occurred
+                                Toast.makeText(RegisterActivity.this, "Error checking user existence: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
 
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {

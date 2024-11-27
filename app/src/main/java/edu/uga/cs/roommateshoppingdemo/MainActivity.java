@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.SignInMethodQueryResult;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,8 +33,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-//        AppCompatDelegate.setDefaultNightMode( AppCompatDelegate.MODE_NIGHT_YES );
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -57,6 +56,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void signIn(String email, String password){
         mAuth = FirebaseAuth.getInstance();
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>(){
                     @Override
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity
                         else{
                             // If sign in fails, display a message to the user.
                             Log.d(DEBUG_TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                            Toast.makeText(MainActivity.this, "Invalid Credentials.",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }

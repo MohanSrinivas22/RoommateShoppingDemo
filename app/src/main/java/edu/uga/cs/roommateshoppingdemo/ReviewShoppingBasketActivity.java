@@ -29,11 +29,11 @@ public class ReviewShoppingBasketActivity extends AppCompatActivity
 
     public static final String DEBUG_TAG = "ReviewShoppingBasketActivity";
 
-    protected RecyclerView basketRecyclerView;
-    protected List<Shopping> shoppingBasket;
+    private RecyclerView basketRecyclerView;
+    private List<Shopping> shoppingBasket;
     protected List<Shopping> shoppingList;
-    protected RecyclerView recyclerView;
-    protected BasketRecyclerAdapter basketRecyclerAdapter;
+    private RecyclerView recyclerView;
+    private BasketRecyclerAdapter basketRecyclerAdapter;
     private FirebaseDatabase database;
 
     @SuppressLint("MissingInflatedId")
@@ -51,8 +51,7 @@ public class ReviewShoppingBasketActivity extends AppCompatActivity
         shoppingBasket = new ArrayList<Shopping>();
 
         recyclerView = findViewById(R.id.recyclerView);
-        RecyclerView.LayoutManager lm = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(lm);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this)); // Works only if recyclerView is initialized
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         basketRecyclerView.setLayoutManager(layoutManager);
