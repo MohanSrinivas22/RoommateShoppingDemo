@@ -184,11 +184,11 @@ public class ReviewShoppingListActivity extends AppCompatActivity
             });
         }
 
-        else if(action == EditShoppingItemDialogFragment.ADD) {
+        else if(action == EditShoppingItemDialogFragment.TO_BASKET) {
             Log.d( DEBUG_TAG, "Adding Shopping Item at: " + position + "(" + shoppingItem.getItemName() + ") to purchase list." );
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("shoppingBasket");
-            myRef.push().setValue(shoppingItem)
+            DatabaseReference newRef = database.getReference("shoppingBasket");
+            newRef.push().setValue(shoppingItem)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {

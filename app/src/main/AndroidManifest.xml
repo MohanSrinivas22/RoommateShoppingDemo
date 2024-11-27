@@ -59,6 +59,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.uga.cs.roommateshoppingdemo.ShoppingManagementActivity" />
         </activity>
+        <activity
+            android:name=".ReviewShoppingBasketActivity"
+            android:parentActivityName=".ShoppingManagementActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.uga.cs.roommateshoppingdemo.ShoppingManagementActivity"/>
+        </activity>
     </application>
 
 </manifest>

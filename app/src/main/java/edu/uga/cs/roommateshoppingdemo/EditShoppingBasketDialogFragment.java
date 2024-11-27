@@ -12,11 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-public class EditShoppingItemDialogFragment extends DialogFragment {
+public class EditShoppingBasketDialogFragment extends DialogFragment {
 
-    public static final int SAVE = 1;   // update an existing shopping item
-    public static final int DELETE = 2; // delete an existing shopping item
-    public static final int TO_BASKET = 3; // add the item to the purchase list
+    public static final int SAVE = 1;   // update an existing shopping bucket item
+    public static final int DELETE = 2; // delete an item from bucket and place it in shopping list
 
     protected EditText itemNameView;
     protected EditText categoryView;
@@ -30,12 +29,12 @@ public class EditShoppingItemDialogFragment extends DialogFragment {
     int quantity;
     double price;
 
-    public interface EditShoppingItemDialogListener{
-        void updateShoppingItem(int position, Shopping shoppingItem, int action);
+    public interface EditShoppingBasketDialogListener{
+        void updateShoppingBasket(int position, Shopping shoppingItem, int action);
     }
 
-    public static EditShoppingItemDialogFragment newInstance(int position, String key, String itemName, String category, int quantity, double price) {
-        EditShoppingItemDialogFragment dialog = new EditShoppingItemDialogFragment();
+    public static EditShoppingBasketDialogFragment newInstance(int position, String key, String itemName, String category, int quantity, double price) {
+        EditShoppingBasketDialogFragment dialog = new EditShoppingBasketDialogFragment();
 
         // Supply job lead values as an argument.
         Bundle args = new Bundle();
@@ -78,11 +77,17 @@ public class EditShoppingItemDialogFragment extends DialogFragment {
 
         builder.setTitle("Edit Shopping Item");
 
-        builder.setPositiveButton("SAVE", new SaveButtonClickListener());
+        builder.setPositiveButton("SAVE", new EditShoppingBasketDialogFragment.SaveButtonClickListener());
 
-        builder.setNegativeButton("DELETE", new DeleteButtonClickListener());
+        builder.setNegativeButton("DELETE", new EditShoppingBasketDialogFragment.DeleteButtonClickListener());
 
-        builder.setNeutralButton("TO_BASKET", new ToBasketButtonClickListener());
+        builder.setNeutralButton( android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // close the dialog
+                dialog.dismiss();
+            }
+        });
 
         return builder.create();
     }
@@ -95,44 +100,33 @@ public class EditShoppingItemDialogFragment extends DialogFragment {
             int quantity = Integer.parseInt(quantityView.getText().toString());
             double price = Double.parseDouble(priceView.getText().toString());
 
-            Shopping shoppingItem = new Shopping(itemName, category, quantity, price);
-            shoppingItem.setKey(key);
+            Shopping basketItem = new Shopping(itemName, category, quantity, price);
+            basketItem.setKey(key);
 
-            EditShoppingItemDialogListener listener = (EditShoppingItemDialogListener) getActivity();
+            EditShoppingBasketDialogFragment.EditShoppingBasketDialogListener listener = (EditShoppingBasketDialogFragment.EditShoppingBasketDialogListener) getActivity();
 
-            listener.updateShoppingItem(position, shoppingItem, SAVE);
+            listener.updateShoppingBasket(position, basketItem, SAVE);
 
             dismiss();
         }
     }
+
 
     private class DeleteButtonClickListener implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialogInterface, int i){
-            Shopping shoppingItem = new Shopping(itemName, category, quantity, price);
-            shoppingItem.setKey(key);
+            Shopping basketItem = new Shopping(itemName, category, quantity, price);
 
-            EditShoppingItemDialogListener listener = (EditShoppingItemDialogListener) getActivity();
-            listener.updateShoppingItem(position, shoppingItem, DELETE);
-            dismiss();
-        }
-    }
+            // Add the item back to the shopping list.
+            AddShoppingItemDialogFragment.AddShoppingItemDialogListener list = (AddShoppingItemDialogFragment.AddShoppingItemDialogListener) getActivity();
+            list.addShoppingItem(basketItem);
 
-    private class ToBasketButtonClickListener implements DialogInterface.OnClickListener {
+            basketItem.setKey(key);
 
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i){
-            String itemName = itemNameView.getText().toString();
-            String category = categoryView.getText().toString();
-            int quantity = Integer.parseInt(quantityView.getText().toString());
-            double price = Double.parseDouble(priceView.getText().toString());
+            // Now delete the existing basket item.
+            EditShoppingBasketDialogFragment.EditShoppingBasketDialogListener listener = (EditShoppingBasketDialogFragment.EditShoppingBasketDialogListener) getActivity();
+            listener.updateShoppingBasket(position, basketItem, DELETE);
 
-            Shopping purchaseItem = new Shopping(itemName, category, quantity, price);
-            purchaseItem.setKey(key);
-
-            EditShoppingItemDialogListener listener = (EditShoppingItemDialogListener) getActivity();
-            listener.updateShoppingItem(position, purchaseItem, TO_BASKET);
-            listener.updateShoppingItem(position, purchaseItem, DELETE);
             dismiss();
         }
     }

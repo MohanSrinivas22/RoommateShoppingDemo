@@ -35,7 +35,7 @@ public class ShoppingManagementActivity extends AppCompatActivity {
 
         Log.d( DEBUG_TAG, "ShoppingManagementActivity.onCreate()" );
 
-        Button newItemButton = findViewById(R.id.button2);
+        Button reviewShoppingBasketButton = findViewById(R.id.button2);
         Button reviewShoppingItemsButton = findViewById(R.id.button3);
         Button changePasswordButton = findViewById(R.id.button5);
         Button signoutButton = findViewById(R.id.button6);
@@ -44,7 +44,7 @@ public class ShoppingManagementActivity extends AppCompatActivity {
         signedInTextView = findViewById(R.id.textView4);
 
         reviewShoppingItemsButton.setOnClickListener(new ReviewShoppingItemsButtonClickListener());
-
+        reviewShoppingBasketButton.setOnClickListener(new ReviewShoppingBasketButtonClickListener());
         changePasswordButton.setOnClickListener(new ChangePasswordButtonClickListener());
         signoutButton.setOnClickListener(new SignOutButtonClickListener());
         unRegisterButton.setOnClickListener(new UnRegisterButtonClickListener());
@@ -116,6 +116,14 @@ public class ShoppingManagementActivity extends AppCompatActivity {
         @Override
         public void onClick(View view){
             Intent intent = new Intent(view.getContext(), ReviewShoppingListActivity.class);
+            view.getContext().startActivity(intent);
+        }
+    }
+
+    private class ReviewShoppingBasketButtonClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view){
+            Intent intent = new Intent(view.getContext(), ReviewShoppingBasketActivity.class);
             view.getContext().startActivity(intent);
         }
     }
