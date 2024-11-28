@@ -127,13 +127,13 @@ public class EditShoppingItemDialogFragment extends DialogFragment {
             int quantity = Integer.parseInt(quantityView.getText().toString());
             double price = Double.parseDouble(priceView.getText().toString());
 
-            Shopping basketItem = new Shopping(itemName, category, quantity, price);
+//            Shopping basketItem = new Shopping(itemName, category, quantity, price);
             Shopping shoppingItem = new Shopping(itemName, category, quantity, price);
 
             shoppingItem.setKey(key);
 
             EditShoppingItemDialogListener listener = (EditShoppingItemDialogListener) getActivity();
-            listener.updateShoppingItem(position, basketItem, TO_BASKET);
+//            listener.updateShoppingItem(position, basketItem, TO_BASKET);
 
             listener.updateShoppingItem(position, shoppingItem, DELETE);
             dismiss();
